@@ -39,15 +39,12 @@ def show_fav_news():
 
 
 
-
-
-
 def news_like(news_key, user_key):
     """对新闻点赞"""
     news_id = news_key.split(":")[-1]
     news_like_key = "news_like:" + news_id
-
-    if redis_client.sadd(news_like_key, user_key):  # 判断该用户是否对新闻点过赞, 没有点过赞才点赞数加1
+    # 判断该用户是否对新闻点过赞, 没有点过赞才点赞数加1
+    if redis_client.sadd(news_like_key, user_key): 
         # 让zset中的新闻的分数加1
         redis_client.zincrby("news_zset", 1, news_key)
 
@@ -56,7 +53,8 @@ def show_news_detail(news_key):
     """显示新闻详情"""
     keys = ['title', "content"]
 
-    if redis_client.exists(news_key):   # 判断redis是否有该新闻的缓存(判断键是否存在)
+    # 判断redis是否有该新闻的缓存(判断键是否存在)
+    if redis_client.exists(news_key):   
         vals = redis_client.hmget(news_key, keys)
         # 字典推导式
         return {keys[index]:vals[index] for index in range(2)}
